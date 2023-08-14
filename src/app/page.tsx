@@ -1,34 +1,41 @@
-import {
-  LoginButton,
-  LogoutButton,
-  ProfileButton,
-  RegisterButton,
-} from "@/components/Buttons";
-import { getServerSession } from "next-auth";
-import { authOption } from "@/lib/auth";
+"use client";
 
-export default async function Home() {
-  const session = await getServerSession(authOption);
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
+import { useEffect } from "react";
+
+export default function Home() {
+  // Get session in client side
+  const session = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/auth/login");
+    },
+  });
+
   console.log(session);
 
-  return (
-    <main
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "70vh",
-      }}
-    >
-      <div>
-        <LoginButton />
-        <RegisterButton />
-        <LogoutButton />
-        <ProfileButton />
+  useEffect(() => {
+    if (session.status === "authenticated") {
+      redirect("/protected");
+    }
+  }, [session]);
 
-        <h1>Server Session</h1>
-        <pre>{JSON.stringify(session)}</pre>
+  return (
+    <div className="flex items-center justify-center h-screen ">
+      <div className="flex flex-col items-center gap-5 animate-pulse">
+        <Image
+          height={100}
+          width={100}
+          alt="Logo"
+          className=""
+          src="/images/logo.svg"
+        />
+        <span className="text-3xl font-semibold text-primary-title">
+          NEXT AUTH
+        </span>
       </div>
-    </main>
+    </div>
   );
 }

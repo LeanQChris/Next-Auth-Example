@@ -9,7 +9,16 @@ export default function LoginForm() {
   const [error, setError] = useState<any | null>(null);
   const router = useRouter();
 
-  const handleLogin = async (values: any, { setSubmitting }: any) => {
+  /**
+   * handle login using next auth credential signin measures
+   * @param {any} values:any
+   * @param {any} {setSubmitting}:any
+   * @returns {Promise<void>}
+   */
+  const handleLogin = async (
+    values: any,
+    { setSubmitting }: any
+  ): Promise<void> => {
     const res: SignInResponse | undefined = await signIn("credentials", {
       redirect: false,
       username: values.username,
@@ -21,7 +30,9 @@ export default function LoginForm() {
     } else {
       setError(null);
     }
-    if (res?.url) router.push(res.url);
+    if (res?.url) {
+      router.push(res.url);
+    }
     setSubmitting(false);
   };
 
@@ -88,6 +99,7 @@ export default function LoginForm() {
           </button>
         )}
       </div>
+      {error && <p>{error}</p>}
     </form>
   );
 }
